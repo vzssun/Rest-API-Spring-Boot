@@ -1,9 +1,12 @@
-package restapi.spring.project.Book;
+package restapi.spring.project.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import restapi.spring.project.Model.BookModel;
+import restapi.spring.project.Services.BookService;
 
 import java.util.List;
 import java.util.Optional;

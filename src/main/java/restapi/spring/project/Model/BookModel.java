@@ -1,4 +1,4 @@
-package restapi.spring.project.Book;
+package restapi.spring.project.Model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

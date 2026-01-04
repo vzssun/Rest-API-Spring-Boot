@@ -1,7 +1,10 @@
-package restapi.spring.project.Book;
+package restapi.spring.project.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import restapi.spring.project.Model.BookModel;
+import restapi.spring.project.Repository.BookRepository;
 
 import java.util.List;
 import java.util.Optional;
