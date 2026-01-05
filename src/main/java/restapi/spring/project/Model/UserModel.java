@@ -12,7 +12,6 @@ public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
-
     private String username;
     private String cpf;
     private String email;
