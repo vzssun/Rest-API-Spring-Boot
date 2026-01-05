@@ -1,9 +1,12 @@
 package restapi.spring.project.Dto.request;
 
-import lombok.Getter;
-import lombok.Setter;
-@Getter
-@Setter
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserRequest {
 
     // @Size(min =3 max=100); Discuss whether it is interesting to paste into pom.xml import javax.validation.constraints.Size
