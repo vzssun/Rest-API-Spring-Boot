@@ -34,18 +34,17 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserResponse findUserById(Long id) {
-        UserModel user = userRepository.findById(id)
+    public UserResponse findUserById(Long userId) {
+        UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         return new UserResponse(user);
     }
 
-    public UserResponse updateUser(Long id, UserRequest request) {
-        UserModel user = userRepository.findById(id)
+    public UserResponse updateUser(Long userId, UserRequest request) {
+        UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         user.setUsername(request.getUsername());
-        user.setCpf(request.getCpf());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
 

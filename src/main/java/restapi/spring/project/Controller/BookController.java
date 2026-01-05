@@ -5,7 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import restapi.spring.project.Dto.request.BookReservationRequest;
+import restapi.spring.project.Dto.response.BookReservationResponse;
 import restapi.spring.project.Model.BookModel;
+import restapi.spring.project.Model.UserModel;
 import restapi.spring.project.Services.BookService;
 
 import java.util.List;
@@ -23,9 +26,9 @@ public class BookController {
         return bookService.getAllBooks();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<BookModel> getBookById(@PathVariable Long id) {
-        Optional<BookModel> book = bookService.getBookById(id);
+    @GetMapping("/{bookId}")
+    public ResponseEntity<BookModel> getBookById(@PathVariable Long bookId) {
+        Optional<BookModel> book = bookService.getBookById(bookId);
         return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
@@ -35,15 +38,27 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<BookModel> updateBook(@PathVariable Long id, @RequestBody BookModel bookDetails) {
-        BookModel updatedBook = bookService.updateBook(id, bookDetails);
+    @PutMapping("/{bookId}")
+    public ResponseEntity<BookModel> updateBook(@PathVariable Long bookId, @RequestBody BookModel bookDetails) {
+        BookModel updatedBook = bookService.updateBook(bookId, bookDetails);
         return updatedBook != null ? ResponseEntity.ok(updatedBook) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-        bookService.deleteBook(id);
+    @DeleteMapping("/{bookId}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
+        bookService.deleteBook(bookId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+    @GetMapping("/reservations/{reservationId}")
+    public ResponseEntity<List<BookModel>> getAllBookReservations(@PathVariable Long reservationId) {
+        List<BookModel> reservations = bookService.getAllBookReservations(reservationId);
+        return ResponseEntity.ok(reservations);
+    }
+
+    @PostMapping("{bookId}/{userId}/reserve")
+    public ResponseEntity<BookReservationResponse> reserveBook(@PathVariable Long bookId ,@PathVariable Long userId, @RequestBody BookReservationRequest request) {
+        BookReservationResponse response = bookService.reserveBook(bookId, userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 }
+
