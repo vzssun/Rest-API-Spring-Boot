@@ -1,18 +1,3 @@
-#spring:
-#  datasource:
-#    url: jdbc:mysql://localhost:3306/microservices
-#    username: root
-#    password:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#
-#  jpa:
-#    database-platform: org.hibernate.dialect.MySQLDialect
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: true
-#
-#  application:
-#    name: USER-SERVICE
 spring:
   datasource:
     url: jdbc:h2:mem:testdb
@@ -31,5 +16,15 @@ spring:
       enabled: true
       path: /h2-console
 
+security:
+  jwt:
+    secret-key: b61b8b5d03e970bf45205bb4c423bda72138d9907da802207758ee337c0986c6
+    expiration: 86400000  # 1 dia em milissegundos
+logging:
+  level:
+    org.springframework.security: DEBUG # Shows detailed security logs (authentication, authorization, filters)
+    org.springframework.web: DEBUG # Shows details of HTTP requests, route mappings
+    org.springframework.boot.autoconfigure: DEBUG # Shows auto-configuration decisions
+    restapi.spring.project: TRACE # Maximum level of detail for your own code (custom package)
 server:
   port: 8080
