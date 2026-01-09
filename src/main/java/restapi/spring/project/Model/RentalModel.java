@@ -32,15 +32,4 @@ public class RentalModel {
         this.rentalDate = rentalDate;
         this.returnDate = returnDate;
     }
-
-@Override
-    public String toString() {
-        return "RentalModel{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", bookId='" + bookId + '\'' +
-                ", rentalDate='" + rentalDate + '\'' +
-                ", returnDate='" + returnDate + '\'' +
-                '}';
-    }
 }

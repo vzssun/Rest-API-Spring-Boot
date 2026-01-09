@@ -3,8 +3,11 @@ package restapi.spring.project.Model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.*;
+
 
 @Entity
 @Data
@@ -16,7 +19,9 @@ public class BookModel {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long bookId; // primary key for the book
-    private Long reservationId; // foreign key to link to reservations
+    @ManyToOne
+    @JoinColumn(name = "reservation_id")
+    private ReservationModel reservation; // foreign key to link to reservations
     private String reserverName;
     private String title;
     private String author;

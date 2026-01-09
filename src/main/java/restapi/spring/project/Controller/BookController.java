@@ -5,10 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import restapi.spring.project.Dto.request.BookReservationRequest;
-import restapi.spring.project.Dto.response.BookReservationResponse;
+import restapi.spring.project.Dto.response.ApiResponse;
 import restapi.spring.project.Model.BookModel;
-import restapi.spring.project.Model.UserModel;
 import restapi.spring.project.Services.BookService;
 
 import java.util.List;
@@ -22,43 +20,57 @@ public class BookController {
     private BookService bookService;
 
     @GetMapping
-    public List<BookModel> getAllBooks() {
-        return bookService.getAllBooks();
+    public ResponseEntity<ApiResponse<List<BookModel>>> getAllBooks() {
+
+    List<BookModel> books = bookService.getAllBooks();
+
+    if (books.isEmpty()) {
+        return ResponseEntity.ok(
+            ApiResponse.success("No books available", List.of())
+        );
+    }
+
+    return ResponseEntity.ok(
+        ApiResponse.success(
+            "Found " + books.size() + " books",
+            books
+        )
+    );
     }
 
     @GetMapping("/{bookId}")
-    public ResponseEntity<BookModel> getBookById(@PathVariable Long bookId) {
+    public ResponseEntity<ApiResponse<BookModel>> getBookById(@PathVariable Long bookId) {
         Optional<BookModel> book = bookService.getBookById(bookId);
-        return book.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+
+        return book.map(b -> ResponseEntity.ok(ApiResponse.success("Book found", b)))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure("Book not found")));
     }
 
     @PostMapping
-    public ResponseEntity<BookModel> createBook(@RequestBody BookModel book) {
+    public ResponseEntity<ApiResponse<BookModel>> createBook(@RequestBody BookModel book) {
         BookModel savedBook = bookService.saveBook(book);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Book created successfully", savedBook));
     }
 
     @PutMapping("/{bookId}")
-    public ResponseEntity<BookModel> updateBook(@PathVariable Long bookId, @RequestBody BookModel bookDetails) {
+    public ResponseEntity<ApiResponse<BookModel>> updateBook(@PathVariable Long bookId, @RequestBody BookModel bookDetails) {
         BookModel updatedBook = bookService.updateBook(bookId, bookDetails);
-        return updatedBook != null ? ResponseEntity.ok(updatedBook) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        if (updatedBook == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure("Book not found"));
+        }
+
+        return updatedBook != null ? ResponseEntity.ok(ApiResponse.success("Book updated successfully", updatedBook)) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure("Book not found"));
     }
 
     @DeleteMapping("/{bookId}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
+    public ResponseEntity<ApiResponse<Void>> deleteBook(@PathVariable Long bookId) {
         bookService.deleteBook(bookId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
-    @GetMapping("/reservations/{reservationId}")
-    public ResponseEntity<List<BookModel>> getAllBookReservations(@PathVariable Long reservationId) {
-        List<BookModel> reservations = bookService.getAllBookReservations(reservationId);
-        return ResponseEntity.ok(reservations);
-    }
 
-    @PostMapping("{bookId}/{userId}/reserve")
-    public ResponseEntity<BookReservationResponse> reserveBook(@PathVariable Long bookId ,@PathVariable Long userId, @RequestBody BookReservationRequest request) {
-        BookReservationResponse response = bookService.reserveBook(bookId, userId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        if (!bookService.getBookById(bookId).isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure("Book not found"));
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(ApiResponse.success("Book deleted successfully", null));
     }
 }
-

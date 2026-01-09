@@ -3,12 +3,8 @@ package restapi.spring.project.Services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import restapi.spring.project.Dto.request.BookReservationRequest;
-import restapi.spring.project.Dto.response.BookReservationResponse;
 import restapi.spring.project.Model.BookModel;
-import restapi.spring.project.Model.UserModel;
 import restapi.spring.project.Repository.BookRepository;
-import restapi.spring.project.Repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,9 +14,6 @@ public class BookService {
 
     @Autowired // Inject an instance of BookRepository here
     private BookRepository bookRepository;
-    @Autowired
-    private UserRepository userRepository;
-
 
     public List<BookModel> getAllBooks() {
         return bookRepository.findAll();
@@ -32,6 +25,10 @@ public class BookService {
 
     public BookModel saveBook(BookModel book) {
         return bookRepository.save(book);
+    }
+
+    public long getAllBooksCount() {
+        return bookRepository.count();
     }
 
     public BookModel updateBook(Long id, BookModel bookDetails) {
@@ -54,22 +51,6 @@ public class BookService {
 //    public List<BookModel> findBookbyTitle(String title) {
 //        return bookRepository.findBookbyTitle(title);
 //    }
-
-
-    public BookReservationResponse reserveBook(Long bookId, Long userId, BookReservationRequest request) {
-        Optional<UserModel> existingUser = userRepository.findById(userId);
-        Optional<BookModel> existingBook = bookRepository.findById(bookId);
-        existingUser.ifPresent(user -> {
-            existingBook.ifPresent(book -> {
-                book.setReservationId(bookId);
-                book.setReserverName(user.getUsername());
-                book.setReservationPeriod(request.getReservationPeriod());
-                book.setAvailable(false);
-                bookRepository.save(book);
-            });
-        });
-        return new BookReservationResponse(existingBook.get(), existingUser.get());
-    }
 
     public void deleteBook(Long id) {
         bookRepository.deleteById(id);

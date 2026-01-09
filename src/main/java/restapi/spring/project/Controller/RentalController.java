@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.http.HttpStatus;
 
+import restapi.spring.project.Dto.response.ApiResponse;
 import restapi.spring.project.Model.RentalModel;
 
 import org.springframework.http.HttpHeaders;
@@ -20,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
-
 @RestController
 @RequestMapping("/api/rentals")
 public class RentalController {
@@ -29,26 +28,41 @@ public class RentalController {
     @Autowired
     private RentalService rentalService;
 
-    @GetMapping()
-    public ResponseEntity<Object> getRentals(@RequestParam(value = "userId", required = false) Long userId) {
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<RentalModel>>> getRentals(
+        @RequestParam(value = "userId", required = false) Long userId) {
+
+        List<RentalModel> rentals;
+
         if (userId != null) {
-            // Fetch rentals for the specific user
-            List<RentalModel> rentals = rentalService.getRentalsByUserId(userId);
-            if (rentals.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                                    .body("No rentals found for user ID: " + userId);
-            }
-            return ResponseEntity.ok(rentals);
-        } else {
-            // Fetch all rentals
-            List<RentalModel> rentals = rentalService.getAllRentals();
-            if (rentals.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                                    .body("No rentals available.");
-            }
-            return ResponseEntity.ok(rentals);
+            rentals = rentalService.getRentalsByUserId(userId);
+
+        if (rentals.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.failure(
+                    "No rentals found for user ID: " + userId
+                ));
         }
+
+        return ResponseEntity.ok(
+            ApiResponse.success(
+                "Rentals fetched for user ID: " + userId,
+                rentals
+            )
+        );
     }
+
+    rentals = rentalService.getAllRentals();
+
+    if (rentals.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+            .body(ApiResponse.failure("No rentals available"));
+    }
+
+    return ResponseEntity.ok(
+        ApiResponse.success("All rentals fetched", rentals)
+    );
+}
 
     @PostMapping
     public ResponseEntity<RentalModel> createRental(@RequestBody RentalModel entity) {
