@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import restapi.spring.project.Services.JwtService;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
@@ -20,10 +21,11 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService UserDetailsService = new ApplicationConfiguration(null).userDetailsService();
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
-
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    public JwtAuthenticationFilter(JwtService jwtService, HandlerExceptionResolver handlerExceptionResolver) {
         this.jwtService = jwtService;
+        this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
     @Override
@@ -55,12 +57,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
-        } catch (Exception e) {
-            System.err.println("404. Resource Not Fund" + e.getMessage());
-
-        } finally {
-            filterChain.doFilter(request, response);
-
+        } catch (Exception exception) {
+            handlerExceptionResolver.resolveException(request, response, null, exception);
 
     }
 
