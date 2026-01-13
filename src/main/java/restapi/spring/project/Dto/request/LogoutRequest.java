@@ -1,4 +1,4 @@
-package restapi.spring.project.Dto.response;
+package restapi.spring.project.Dto.request;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -6,13 +6,13 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
-
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse{
+@NoArgsConstructor
+public class LogoutRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

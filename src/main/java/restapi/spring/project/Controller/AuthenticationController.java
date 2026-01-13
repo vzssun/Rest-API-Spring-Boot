@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import restapi.spring.project.Dto.request.LoginRequest;
+import restapi.spring.project.Dto.request.LogoutRequest;
 import restapi.spring.project.Dto.request.RegisterRequest;
 import restapi.spring.project.Dto.response.LoginResponse;
 import restapi.spring.project.Services.AuthenticationService;
@@ -30,18 +31,14 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<Optional<LoginResponse>> authenticate(@RequestBody LoginRequest request) {
         Optional<LoginResponse> response = Optional.ofNullable(authenticationService.authenticate(request));
-        response.ifPresent(r ->{
-            UserDetails userDetails = authenticationService.loadUserByUsername(request.getEmail());
-            String token = jwtService.generateToken(userDetails);
-            r.setToken(token);
-        });
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 
     }
     @DeleteMapping("/logout")
-    public ResponseEntity<String> logoutUser() {
-        // Invalidate the JWT token on the client side
-        return ResponseEntity.ok("User logged out successfully.");
+    public ResponseEntity<LogoutRequest> logout(@RequestBody LogoutRequest request) {
+        LogoutRequest logout = authenticationService.logout(request);
+        return ResponseEntity.status(HttpStatus.OK).body(logout);
     }
 
 }

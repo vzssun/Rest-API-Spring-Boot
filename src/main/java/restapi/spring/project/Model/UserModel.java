@@ -7,6 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import restapi.spring.project.Enum.Role;
 
 import java.util.Collection;
 import java.util.Date;
@@ -20,6 +21,9 @@ public class UserModel implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long userId;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
     @Column(nullable = false)
     private String fullName;
     @Column(nullable = false)
@@ -32,8 +36,9 @@ public class UserModel implements UserDetails {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Date updatedAt;
+    @Column(name = "TOKEN")
+    private String token;    // sera Retirado ao implementar o Cache
     @Column(name = "expired_at")
-    @Value("${security.jwt.expiration}")
     private Date expiredAt;
 
     //
@@ -45,6 +50,11 @@ public class UserModel implements UserDetails {
     @Override
     public String getUsername() { // returns the email address because it is unique information about the user
         return email;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     @Override

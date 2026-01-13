@@ -1,6 +1,7 @@
 package restapi.spring.project.Services;
 
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,14 +10,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import restapi.spring.project.Dto.request.LoginRequest;
+import restapi.spring.project.Dto.request.LogoutRequest;
 import restapi.spring.project.Dto.request.RegisterRequest;
 import restapi.spring.project.Dto.response.LoginResponse;
 import restapi.spring.project.Model.UserModel;
 import restapi.spring.project.Repository.UserRepository;
+import restapi.spring.project.Enum.Role;
 
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
 
 @Service
 public class AuthenticationService implements UserDetailsService {
@@ -25,19 +27,24 @@ public class AuthenticationService implements UserDetailsService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final JwtService jwtService;
+
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
     }
+
 
     public RegisterRequest createUser(RegisterRequest request) {
         UserModel user = new UserModel();
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(Role.USER);
 
         userRepository.save(user);
         return request;
@@ -46,36 +53,38 @@ public class AuthenticationService implements UserDetailsService {
 
     public LoginResponse authenticate(LoginRequest request) {
         Authentication auth = authenticationManager.authenticate(
-                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
                         request.getPassword()
                 )
         );
-        UserModel user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        UserModel user = (UserModel) auth.getPrincipal();
+        String token = jwtService.generateToken(new HashMap<>(), user);
+        user.setToken(token);
+        user.setExpiredAt(jwtService.getExpirationDateFromToken(token));
+        userRepository.save(user);
 
-        return new LoginResponse(user.getUserId(), user.getEmail(), user.getExpiredAt());
+        return new LoginResponse(user.getUserId(), user.getToken(), user.getExpiredAt());
+    };
+
+    public LogoutRequest logout(LogoutRequest request) {
+        UserModel user = userRepository.findById(request.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+        user.setToken(null);
+        user.setExpiredAt(null);
+        userRepository.save(user);
+        return request;
     }
 
-    public List<UserModel> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(user -> {
-                    UserModel safeUser = new UserModel();
-                    safeUser.setUserId(user.getUserId());
-                    safeUser.setFullName(user.getFullName());
-                    safeUser.setEmail(user.getEmail());
-                    safeUser.setCreatedAt(user.getCreatedAt());
-                    safeUser.setExpiredAt(user.getExpiredAt());
-                    return safeUser;
-                })
-                .collect(Collectors.toList());
-//Annotation Feature: In the future, place objects in entities of how many books Usario has reserved or rented
+/*    public UserModel createAdministrator(RegisterRequest request) {
+        UserModel admin = new UserModel();
+        admin.setFullName(request.getFullName());
+        admin.setEmail(request.getEmail());
+        admin.setPassword(passwordEncoder.encode(request.getPassword()));
+        admin.setRole(Role.ADMIN);
+        admin.setCreatedAt(new Date());
 
-    }
-
-    public List<UserModel> getExpiredUsers() {
-        Date now = new Date();
-        return userRepository.findByExpiredAtBefore(now);
-    }
+        return userRepository.save(admin);
+    }*/
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
