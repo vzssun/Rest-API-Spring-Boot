@@ -9,17 +9,22 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+// import restapi.spring.project.ApiKeyFilter.ApiKeyFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final AuthenticationProvider authenticationProvider;
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        private final AuthenticationProvider authenticationProvider;
+        private final JwtAuthenticationFilter jwtAuthenticationFilter;
+        // private final ApiKeyFilter apiKeyFilter;
 
     public SecurityConfig(AuthenticationProvider authenticationProvider,
-                          JwtAuthenticationFilter jwtAuthenticationFilter) {
+                        JwtAuthenticationFilter jwtAuthenticationFilter
+                        // ApiKeyFilter apiKeyFilter
+                        ) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        // this.apiKeyFilter = apiKeyFilter;
     }
 
     @Bean
@@ -34,10 +39,12 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/h2-console/**",
                                 "/error",
-                                "/favicon.ico"
+                                "/favicon.ico",
+                                "/api/books"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
+                // .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class) // Enable this line to activate API Key filter (only use on non-human clients)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )

@@ -77,4 +77,9 @@ public class UserModel implements UserDetails {
         return true;
     }
 
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
 }
