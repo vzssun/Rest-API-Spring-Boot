@@ -6,9 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import restapi.spring.project.Enum.Role;
-
 
 @Data
 @NoArgsConstructor

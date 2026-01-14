@@ -4,14 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import restapi.spring.project.Enum.Role;
 
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -21,9 +20,6 @@ public class UserModel implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long userId;
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
     @Column(nullable = false)
     private String fullName;
     @Column(nullable = false)
@@ -41,6 +37,15 @@ public class UserModel implements UserDetails {
     @Column(name = "expired_at")
     private Date expiredAt;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+
+    private Set<RolesModel> roles;
+
     //
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -50,11 +55,6 @@ public class UserModel implements UserDetails {
     @Override
     public String getUsername() { // returns the email address because it is unique information about the user
         return email;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
     }
 
     @Override
@@ -82,4 +82,7 @@ public class UserModel implements UserDetails {
         return password;
     }
 
+    public void setRoles(Set<RolesModel> roles) {
+        this.roles = roles;
+    }
 }

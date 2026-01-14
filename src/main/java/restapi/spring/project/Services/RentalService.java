@@ -8,7 +8,6 @@ import restapi.spring.project.Repository.RentalRepository;
 
 import java.util.List;
 
-
 @Service
 public class RentalService {
 
