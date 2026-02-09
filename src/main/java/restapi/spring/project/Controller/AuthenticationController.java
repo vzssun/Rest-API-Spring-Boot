@@ -2,7 +2,6 @@ package restapi.spring.project.Controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import restapi.spring.project.Dto.request.LoginRequest;
 import restapi.spring.project.Dto.request.LogoutRequest;
@@ -16,10 +15,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/auth")
 public class AuthenticationController {
-    private final JwtService jwtService;
+    // private final JwtService jwtService;
     private final AuthenticationService authenticationService;
     public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService) {
-        this.jwtService = jwtService;
+        // this.jwtService = jwtService;
         this.authenticationService = authenticationService;
 
     }

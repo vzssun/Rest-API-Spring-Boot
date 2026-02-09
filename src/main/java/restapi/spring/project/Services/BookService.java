@@ -31,10 +31,9 @@ public class BookService {
         return bookRepository.count();
     }
 
-    public BookModel updateBook(Long id, BookModel bookDetails) {
-        Optional<BookModel> existingBook = bookRepository.findById(id);
-        if (existingBook.isPresent()) {
-            BookModel book = existingBook.get();
+    public Optional<BookModel> updateBook(Long id, BookModel bookDetails) {
+        return bookRepository.findById(id)
+        .map(book -> {
             book.setTitle(bookDetails.getTitle());
             book.setAuthor(bookDetails.getAuthor());
             book.setIsbn(bookDetails.getIsbn());
@@ -43,9 +42,7 @@ public class BookService {
             book.setPublishedYear(bookDetails.getPublishedYear());
             book.setDescription(bookDetails.getDescription());
             return bookRepository.save(book);
-        } else {
-            return null;
-        }
+        });
     }
 
 //    public List<BookModel> findBookbyTitle(String title) {

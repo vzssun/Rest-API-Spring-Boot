@@ -36,3 +36,14 @@ remote-service:
   api-key: ${MY_APP_API_KEY:default_value_if_not_found}
   base-url: "http://localhost:8080/api"
   timeout: 5000
+
+rate-limit:
+  policies:
+    - path: "/api/books/**"
+      capacity: 30
+      refill-tokens: 30
+      refill-duration: 1m
+    - path: "/**"
+      capacity: 5
+      refill-tokens: 5
+      refill-duration: 1m

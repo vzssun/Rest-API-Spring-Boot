@@ -1,4 +1,4 @@
-package restapi.spring.project.Configs;
+package restapi.spring.project.Services;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

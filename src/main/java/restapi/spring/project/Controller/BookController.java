@@ -57,13 +57,9 @@ public class BookController {
     @PreAuthorize("hasAuthority('BOOK_WRITE')")
     @PutMapping("/{bookId}")
     public ResponseEntity<ApiResponse<BookModel>> updateBook(@PathVariable Long bookId, @RequestBody BookModel bookDetails) {
-        BookModel updatedBook = bookService.updateBook(bookId, bookDetails);
-
-        if (updatedBook == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure("Book not found"));
-        }
-
-        return updatedBook != null ? ResponseEntity.ok(ApiResponse.success("Book updated successfully", updatedBook)) : ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure("Book not found"));
+        return bookService.updateBook(bookId, bookDetails)
+            .map(book -> ResponseEntity.ok(ApiResponse.success("Updated", book)))
+            .orElse(ResponseEntity.status(404).body(ApiResponse.failure("Not found")));
     }
 
     @PreAuthorize("hasAuthority('BOOK_WRITE')")
