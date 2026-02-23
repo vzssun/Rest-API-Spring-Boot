@@ -9,25 +9,23 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 import restapi.spring.project.Dto.request.LoginRequest;
 import restapi.spring.project.Dto.request.LogoutRequest;
 import restapi.spring.project.Dto.request.RegisterRequest;
 import restapi.spring.project.Dto.response.LoginResponse;
+import restapi.spring.project.Enum.Role;
 import restapi.spring.project.Model.UserModel;
 import restapi.spring.project.Repository.UserRepository;
-import restapi.spring.project.Model.RolesModel;
-import restapi.spring.project.Repository.RolesRepository;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 public class AuthenticationService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    private final RolesRepository rolesRepository;
+
 
     private final PasswordEncoder passwordEncoder;
 
@@ -35,9 +33,9 @@ public class AuthenticationService implements UserDetailsService {
 
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationService(UserRepository userRepository, RolesRepository rolesRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService, AuthenticationManager authenticationManager, RestClient.Builder builder) {
         this.userRepository = userRepository;
-        this.rolesRepository = rolesRepository;
+      ;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
@@ -46,18 +44,11 @@ public class AuthenticationService implements UserDetailsService {
 
     public RegisterRequest createUser(RegisterRequest request) {
         UserModel user = new UserModel();
-        // Fetch the USER role from database
-        RolesModel userRole = rolesRepository.findByRoleName("USER");
 
-        // Create a Set and add the role to it
-        Set<RolesModel> roles = new HashSet<>();
-        roles.add(userRole);
-
-        // Set the roles on the user
         user.setFullName(request.getFullName());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRoles(roles); // Default role USER
+        user.setRole(request.getRole() != null ? request.getRole() : Role.USER);
 
         userRepository.save(user);
         return request;
@@ -87,17 +78,6 @@ public class AuthenticationService implements UserDetailsService {
         userRepository.save(user);
         return request;
     }
-
-/*    public UserModel createAdministrator(RegisterRequest request) {
-        UserModel admin = new UserModel();
-        admin.setFullName(request.getFullName());
-        admin.setEmail(request.getEmail());
-        admin.setPassword(passwordEncoder.encode(request.getPassword()));
-        admin.setRole(Role.ADMIN);
-        admin.setCreatedAt(new Date());
-
-        return userRepository.save(admin);
-    }*/
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

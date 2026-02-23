@@ -6,14 +6,14 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import restapi.spring.project.Enum.Role;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
+
 @Data
 public class UserModel implements UserDetails {
     @Id
@@ -27,7 +27,7 @@ public class UserModel implements UserDetails {
     @Column(nullable = false)
     private String password;
     @CreationTimestamp
-    @Column(updatable = false, name = " created_at")
+    @Column(updatable = false, name = "created_at")
     private Date createdAt;
     @UpdateTimestamp
     @Column(name = "updated_at")
@@ -37,19 +37,21 @@ public class UserModel implements UserDetails {
     @Column(name = "expired_at")
     private Date expiredAt;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+   /* @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
+    )*/
 
-    private Set<RolesModel> roles;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
 
     //
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return role.getAuthoritites();
     }
 
     @Override
@@ -82,7 +84,6 @@ public class UserModel implements UserDetails {
         return password;
     }
 
-    public void setRoles(Set<RolesModel> roles) {
-        this.roles = roles;
+    /*public void setRoles(Set<RolesModel> roles) {
+        this.roles = roles;*/
     }
-}
