@@ -5,25 +5,25 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/admin")
-@PreAuthorize("hasAnyRole('ADMIN, MANAGER')")
+@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
 public class AdminController {
     @GetMapping
-    @PreAuthorize("hasAuthority('admin:read, management:read')")
+    @PreAuthorize("hasAnyAuthority('admin:read, management:read')")
     public String get() {
         return "GET:: AdminController";
     }
     @PostMapping
-    @PreAuthorize("hasAuthority('admin:create, management:create')")
+    @PreAuthorize("hasAnyAuthority('admin:create, management:create')")
     public String post() {
         return "POST:: AdminController";
     }
     @PutMapping
-    @PreAuthorize("hasAuthority('admin:update, management:update')")
+    @PreAuthorize("hasAnyAuthority('admin:update, management:update')")
     public String put() {
         return "PUT:: AdminController";
     }
     @DeleteMapping
-    @PreAuthorize("hasAuthority('admin:delete, management:delete')")
+    @PreAuthorize("hasAnyAuthority('admin:delete, management:delete')")
     public String delete() {
         return "DELETE:: AdminController";
         }

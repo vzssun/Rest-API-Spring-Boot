@@ -47,14 +47,14 @@ public class BookController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure("Book not found")));
     }
 
-    @PreAuthorize("hasAuthority('BOOK_WRITE')")
+    @PreAuthorize("hasAnyAuthority('admin:create', 'management:create')")
     @PostMapping
     public ResponseEntity<ApiResponse<BookModel>> createBook(@RequestBody BookModel book) {
         BookModel savedBook = bookService.saveBook(book);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Book created successfully", savedBook));
     }
 
-    @PreAuthorize("hasAuthority('BOOK_WRITE')")
+    @PreAuthorize("hasAnyAuthority('admin:update', 'management:update')")
     @PutMapping("/{bookId}")
     public ResponseEntity<ApiResponse<BookModel>> updateBook(@PathVariable Long bookId, @RequestBody BookModel bookDetails) {
         return bookService.updateBook(bookId, bookDetails)
@@ -62,7 +62,7 @@ public class BookController {
             .orElse(ResponseEntity.status(404).body(ApiResponse.failure("Not found")));
     }
 
-    @PreAuthorize("hasAuthority('BOOK_WRITE')")
+    @PreAuthorize("hasAnyAuthority('admin:delete', 'management:delete')")
     @DeleteMapping("/{bookId}")
     public ResponseEntity<ApiResponse<Void>> deleteBook(@PathVariable Long bookId) {
         bookService.deleteBook(bookId);
