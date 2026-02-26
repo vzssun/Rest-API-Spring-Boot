@@ -11,9 +11,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.http.HttpMethod.*;
-import static restapi.spring.project.Enum.Permission.*;
-import static restapi.spring.project.Enum.Role.*;
+// import static org.springframework.http.HttpMethod.*;
+// import static restapi.spring.project.Enum.Permission.*;
+// import static restapi.spring.project.Enum.Role.*;
 // import restapi.spring.project.ApiKeyFilter.ApiKeyFilter;
 
 @Configuration
@@ -49,7 +49,8 @@ public class SecurityConfig {
                                 "/h2-console/**",
                                 "/error",
                                 "/favicon.ico",
-                                "/api/books"
+                                "/api/books",
+                                "/api/users"
                         ).permitAll()
                         //  mais facil usar isso aq se quiser algo global
                         /*.requestMatchers("/api/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
