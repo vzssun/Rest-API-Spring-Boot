@@ -6,6 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 
@@ -17,21 +18,24 @@ import lombok.*;
 public class BookModel {
 
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Long bookId; // primary key for the book
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long bookId;
+
     @ManyToOne
     @JoinColumn(name = "reservation_id")
-    private ReservationModel reservation; // foreign key to link to reservations
+    private ReservationModel reservation; // entidade, não Long
+
     private String reserverName;
     private String title;
     private String author;
     private String isbn;
     private String genre;
-    private String coverImageUrl; // URL of the cover image
+    private String coverImageUrl;
     private int publishedYear;
-    private boolean isAvailable; // availability status
+    private boolean isAvailable;
     private String description;
     private String reservationPeriod;
+
 
     // Not needed with Lombok
     

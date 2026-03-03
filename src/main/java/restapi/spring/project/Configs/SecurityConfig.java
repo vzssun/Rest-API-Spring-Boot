@@ -49,7 +49,8 @@ public class SecurityConfig {
                                 "/h2-console/**",
                                 "/error",
                                 "/favicon.ico",
-                                "/api/books"
+                                "/api/books",
+                                "/api/reservations/"
                         ).permitAll()
                         //  mais facil usar isso aq se quiser algo global
                         /*.requestMatchers("/api/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())

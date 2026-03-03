@@ -5,10 +5,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import restapi.spring.project.Dto.response.ApiResponse.*;
 
 import restapi.spring.project.Dto.response.ApiResponse;
+import restapi.spring.project.Dto.response.PaginatedResponse;
 import restapi.spring.project.Model.BookModel;
 import restapi.spring.project.Services.BookService;
+import restapi.spring.project.Repository.BookRepository;
+
+
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +27,10 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
+    @Autowired
+    private BookRepository bookRepository;
+
+    /*
     @GetMapping
     public ResponseEntity<ApiResponse<List<BookModel>>> getAllBooks() {
 
@@ -38,6 +49,13 @@ public class BookController {
         )
     );
     }
+ */
+    
+    @GetMapping
+    public ApiResponse<PaginatedResponse<BookModel>> getAllBooks(Pageable pageable){
+        return ApiResponse.success("Books fetched successfully",
+        bookService.getAllBooks(pageable));
+    }
 
     @GetMapping("/{bookId}")
     public ResponseEntity<ApiResponse<BookModel>> getBookById(@PathVariable Long bookId) {
@@ -47,7 +65,7 @@ public class BookController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure("Book not found")));
     }
 
-    @PreAuthorize("hasAnyAuthority('admin:create', 'management:create')")
+    //@PreAuthorize("hasAnyAuthority('admin:create', 'management:create')")
     @PostMapping
     public ResponseEntity<ApiResponse<BookModel>> createBook(@RequestBody BookModel book) {
         BookModel savedBook = bookService.saveBook(book);
