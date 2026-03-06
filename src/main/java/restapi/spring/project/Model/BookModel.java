@@ -1,17 +1,12 @@
 package restapi.spring.project.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.persistence.*;
 import lombok.*;
 
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "books")
@@ -24,7 +19,8 @@ public class BookModel {
     @ManyToOne
     @JoinColumn(name = "reservation_id")
     private ReservationModel reservation; // entidade, não Long
-
+    
+    private String category;
     private String reserverName;
     private String title;
     private String author;

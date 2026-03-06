@@ -42,15 +42,19 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) //
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(
-                                "/",
+                               "/",
                                 "/home",
+                                "/error",
+                                "/favicon.ico",
                                 "/api/auth/**",
                                 "/auth/**",
                                 "/h2-console/**",
-                                "/error",
-                                "/favicon.ico",
                                 "/api/books",
-                                "/api/users"
+                                "/api/books/**",
+                                "/api/reservations",
+                                "/api/reservations/**",
+                                "/api/rentals",
+                                "/api/rentals/**"
                         ).permitAll()
                         //  mais facil usar isso aq se quiser algo global
                         /*.requestMatchers("/api/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())

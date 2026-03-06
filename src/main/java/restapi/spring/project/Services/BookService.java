@@ -1,20 +1,22 @@
 package restapi.spring.project.Services;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import restapi.spring.project.Dto.BookDTO;
 import restapi.spring.project.Dto.response.PaginatedResponse;
+import restapi.spring.project.Mapper.BookMapper;
 import restapi.spring.project.Model.BookModel;
 import restapi.spring.project.Model.ReservationModel;
 import restapi.spring.project.Repository.BookRepository;
 import restapi.spring.project.Repository.ReservationRepository;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-
-import java.util.List;
-import java.util.Optional;
+import restapi.spring.project.Specification.BookSpecification;
 
 @Service // Treat this class as a Service bean (can be injected into other components)
 public class BookService {
@@ -22,16 +24,30 @@ public class BookService {
     @Autowired // Inject an instance of BookRepository here
     private BookRepository bookRepository;
 
+    @Autowired
+        private BookMapper bookMapper; 
+        
     @Autowired 
     private ReservationRepository reservationRepository;
-  //  public List<BookModel> getAllBooks() {
-  //      return bookRepository.findAll();
-  //  }
+  
+
+
   public PaginatedResponse<BookModel> getAllBooks(Pageable pageable){
     Page<BookModel> page = bookRepository.findAll(pageable);
     return buildPaginatedResponse(page);
 }
 
+
+public  PaginatedResponse<BookDTO> getBooks(Pageable pageable, String search, String category){
+
+    Specification<BookModel> spec = BookSpecification.withFilters(search, category);
+    Page<BookModel> page = bookRepository.findAll(spec, pageable);
+
+    return buildPaginatedResponse(page.map(bookMapper::toDTO));
+
+}
+
+// offset pagination
 private <T> PaginatedResponse<T> buildPaginatedResponse(Page<T> page){
     PaginatedResponse<T> response = new PaginatedResponse<>();
     response.setData(page.getContent());

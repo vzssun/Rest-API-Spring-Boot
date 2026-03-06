@@ -1,5 +1,8 @@
 package restapi.spring.project.Controller;
 
+import org.springframework.web.bind.annotation.RequestParam;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import restapi.spring.project.Dto.response.ApiResponse.*;
-
+import restapi.spring.project.Dto.BookDTO;
 import restapi.spring.project.Dto.response.ApiResponse;
 import restapi.spring.project.Dto.response.PaginatedResponse;
 import restapi.spring.project.Model.BookModel;
@@ -50,12 +53,25 @@ public class BookController {
     );
     }
  */
-    
+
+
+    /*
     @GetMapping
-    public ApiResponse<PaginatedResponse<BookModel>> getAllBooks(Pageable pageable){
-        return ApiResponse.success("Books fetched successfully",
-        bookService.getAllBooks(pageable));
+    public ApiResponse<PaginatedResponse<BookModel>> getByCategory(String category,Pageable pageable){
+        return ApiResponse.success("Books Category fetched successfully", bookService.getBookByCategory(category, pageable));
+
     }
+    */
+
+    @GetMapping
+    public ApiResponse<PaginatedResponse<BookDTO>> getBooks(
+        Pageable pageable,
+        @RequestParam(required = false) String search,
+        @RequestParam(required = false) String category
+    ){
+        return ApiResponse.success("Books Category fetched successfully", bookService.getBooks(pageable, search, category));
+    }
+
 
     @GetMapping("/{bookId}")
     public ResponseEntity<ApiResponse<BookModel>> getBookById(@PathVariable Long bookId) {
