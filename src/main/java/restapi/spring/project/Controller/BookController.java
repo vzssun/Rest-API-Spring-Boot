@@ -1,16 +1,12 @@
 package restapi.spring.project.Controller;
 
-import org.springframework.web.bind.annotation.RequestParam;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import restapi.spring.project.Dto.response.ApiResponse.*;
 import restapi.spring.project.Dto.BookDTO;
 import restapi.spring.project.Dto.response.ApiResponse;
 import restapi.spring.project.Dto.response.PaginatedResponse;
@@ -63,17 +59,9 @@ public class BookController {
     }
     */
 
-    @GetMapping
-    public ApiResponse<PaginatedResponse<BookDTO>> getBooks(
-        Pageable pageable,
-        @RequestParam(required = false) String search,
-        @RequestParam(required = false) String category
-    ){
-        return ApiResponse.success("Books Category fetched successfully", bookService.getBooks(pageable, search, category));
-    }
-
-
-    @GetMapping("/{bookId}")
+   
+   // Pegar livro pelo id
+   @GetMapping("/{bookId}")
     public ResponseEntity<ApiResponse<BookModel>> getBookById(@PathVariable Long bookId) {
         Optional<BookModel> book = bookService.getBookById(bookId);
 
@@ -81,6 +69,34 @@ public class BookController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.failure("Book not found")));
     }
 
+    // Pegar todos os livros 
+    @GetMapping
+    public ApiResponse<PaginatedResponse<BookDTO>> getAllBooks(Pageable pageable) {
+        return ApiResponse.success("Books fetched successfully", bookService.getAllBooks(pageable));
+    }
+    // Pegar livro pelo nome
+    @GetMapping("/search")
+    public ApiResponse<PaginatedResponse<BookDTO>> getBooksByName(Pageable pageable, @RequestParam String name) {
+        return ApiResponse.success("Books found", bookService.getBooksByName(pageable, name));
+
+    }
+    // Pegar livros por categoria
+    @GetMapping("/category/{category}")
+    public ApiResponse<PaginatedResponse<BookDTO>> getBooksByCategory(Pageable pageable, @PathVariable String category){
+        return ApiResponse.success("Books Category fetched successfully", bookService.getBooksByCategory(pageable, category));
+    }
+
+    @GetMapping("/search/category")
+    public ApiResponse<PaginatedResponse<BookDTO>> getBooksByNameAndCategory(Pageable pageable,@RequestParam String name, @RequestParam String category) {
+        return ApiResponse.success("Books found", bookService.getBooksByNameAndCategory(pageable, name, category));
+    }
+
+    // pegar livros com Disponibilidade mas não tem paginação nem filtro de categoria
+
+    @GetMapping("/available")
+    public ApiResponse<PaginatedResponse<BookDTO>> getAvailableBooks(Pageable pageable, @RequestParam boolean available) {
+        return ApiResponse.success("Available books found", bookService.getBooksByAvailability(pageable, available));
+    }
     //@PreAuthorize("hasAnyAuthority('admin:create', 'management:create')")
     @PostMapping
     public ResponseEntity<ApiResponse<BookModel>> createBook(@RequestBody BookModel book) {

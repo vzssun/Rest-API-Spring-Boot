@@ -20,4 +20,6 @@ JpaSpecificationExecutor<BookModel> {
       
     List<BookModel> findByReservationId(Long reservationId);
 //    List<BookModel> findBookbyTitle(String title);
+
+    List<BookModel> findByTitleContainingIgnoreCase(String title);
 }
