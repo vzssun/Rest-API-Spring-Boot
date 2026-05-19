@@ -1,5 +1,6 @@
 package restapi.spring.project.Services;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -79,6 +80,8 @@ public class AuthenticationService implements UserDetailsService {
         return request;
     }
 
+    // cache aqui
+    @Cacheable(value = "usuarios", key = "#email")
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)

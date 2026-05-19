@@ -54,7 +54,11 @@ public class SecurityConfig {
                                 "/api/reservations",
                                 "/api/reservations/**",
                                 "/api/rentals",
-                                "/api/rentals/**"
+                                "/api/rentals/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs",
+                                "/v3/api-docs/**"
                         ).permitAll()
                         //  mais facil usar isso aq se quiser algo global
                         /*.requestMatchers("/api/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())

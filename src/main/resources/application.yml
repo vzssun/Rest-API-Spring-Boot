@@ -8,7 +8,8 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
   application:
     name: USER-SERVICE
-
+  cache:
+    type: caffeine
 security:
   jwt:
     secret-key: b61b8b5d03e970bf45205bb4c423bda72138d9907da802207758ee337c0986c6

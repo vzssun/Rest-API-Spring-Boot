@@ -44,7 +44,13 @@ public class RateLimitFilter extends OncePerRequestFilter {
             registry.put(config.getPath(), policy);
         }
     }
-
+    // ignorar o filtro para endpoints do Swagger e da documentação da API
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/swagger-ui") ||
+               path.startsWith("/v3/api-docs");
+    }
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,

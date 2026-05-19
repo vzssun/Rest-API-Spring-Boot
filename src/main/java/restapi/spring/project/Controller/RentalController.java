@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import restapi.spring.project.Services.RentalService;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@Tag(name = "Rentals", description = "Gerenciamento de aluguéis — dados transacionais, sem cache")
 @RestController
 @RequestMapping("/api/rentals")
 public class RentalController {
@@ -28,6 +32,10 @@ public class RentalController {
     @Autowired
     private RentalService rentalService;
 
+    @Operation(summary = "Lista aluguéis — todos ou filtrados por usuário")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Aluguéis retornados")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204", description = "Nenhum aluguel encontrado")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Nenhum aluguel para o usuário informado")
     @GetMapping
     public ResponseEntity<ApiResponse<List<RentalModel>>> getRentals(
         @RequestParam(value = "userId", required = false) Long userId) {
@@ -64,6 +72,8 @@ public class RentalController {
     );
 }
 
+    @Operation(summary = "Cria um novo aluguel")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Aluguel criado com sucesso")
     @PostMapping
     public ResponseEntity<RentalModel> createRental(@RequestBody RentalModel entity) {
         RentalModel saved = rentalService.saveRental(entity);
@@ -73,6 +83,9 @@ public class RentalController {
                 .body(saved);
     }
 
+    @Operation(summary = "Atualiza um aluguel existente")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Aluguel atualizado")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Aluguel não encontrado")
     @PutMapping("/{id}")
     public ResponseEntity<RentalModel> updateRental(
         @PathVariable Long id,
@@ -86,6 +99,9 @@ public class RentalController {
     return ResponseEntity.ok(updatedRental);
     }
 
+    @Operation(summary = "Remove um aluguel")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "204", description = "Aluguel removido com sucesso")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "Aluguel não encontrado")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRental(@PathVariable Long id) {
         boolean deleted = rentalService.deleteRentalById(id);
